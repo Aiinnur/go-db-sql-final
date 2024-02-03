@@ -18,8 +18,7 @@ func (s ParcelStore) Add(p Parcel) (int, error) {
 	res, err := s.db.Exec("insert into parcel (status, client, address, created_at) values(?, ?, ?, ?)",
 		p.Status, p.Client, p.Address, p.CreatedAt)
 	if err != nil {
-		return 0, err
-		fmt.Errorf("Error during select request")
+		return 0, fmt.Errorf("Error during select request: %v", err)
 	}
 
 	id, err := res.LastInsertId()
@@ -50,7 +49,7 @@ func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
 	// заполните срез Parcel данными из таблицы
 	var res []Parcel
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -58,10 +57,15 @@ func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
 		var p Parcel
 		err := rows.Scan(&p.Number, &p.Client, &p.Status, &p.Address, &p.CreatedAt)
 		if err != nil {
-			return res, err
+			return nil, err
 		}
 		res = append(res, p)
 	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
 	return res, nil
 }
 
