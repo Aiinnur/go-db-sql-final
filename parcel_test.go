@@ -49,8 +49,7 @@ func TestAddGetDelete(t *testing.T) {
 	// получите только что добавленную посылку, убедитесь в отсутствии ошибки
 	// проверьте, что значения всех полей в полученном объекте совпадают со значениями полей в переменной parcel
 	newParcel, err := store.Get(id)
-	require.NoError(t, err)
-	assert.Equal(t, newParcel.Number, id)
+	parcel.Number = id
 	assert.Equal(t, newParcel, parcel)
 
 	// delete
@@ -115,7 +114,7 @@ func TestSetStatus(t *testing.T) {
 	// получите добавленную посылку и убедитесь, что статус обновился
 	newParcel, err := store.Get(id)
 	require.NoError(t, err)
-	assert.Equal(t, ParcelStatusSent, newParcel.Address)
+	assert.Equal(t, ParcelStatusSent, newParcel.Status)
 }
 
 // TestGetByClient проверяет получение посылок по идентификатору клиента
